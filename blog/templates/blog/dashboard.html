@@ -1,0 +1,357 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Django Blog{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-header {
+        background: white;
+        padding: 2rem;
+        border-radius: 24px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #6366f1, #ec4899);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+
+    .dashboard-header p {
+        color: #6b7280;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #6366f1, #ec4899);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .stat-card-1 .stat-icon {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    }
+
+    .stat-card-2 .stat-icon {
+        background: linear-gradient(135deg, #ec4899, #f472b6);
+    }
+
+    .stat-card-3 .stat-icon {
+        background: linear-gradient(135deg, #10b981, #34d399);
+    }
+
+    .stat-card-4 .stat-icon {
+        background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    }
+
+    .stat-card-5 .stat-icon {
+        background: linear-gradient(135deg, #ef4444, #f87171);
+    }
+
+    .stat-card-6 .stat-icon {
+        background: linear-gradient(135deg, #3b82f6, #60a5fa);
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1f2937;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        color: #6b7280;
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    .dashboard-sections {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .section-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 24px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f3f4f6;
+    }
+
+    .section-header h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .view-all-link {
+        color: #6366f1;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+    }
+
+    .view-all-link:hover {
+        color: #4f46e5;
+    }
+
+    .post-list-item {
+        padding: 1.25rem;
+        background: #f9fafb;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+    }
+
+    .post-list-item:hover {
+        background: #f3f4f6;
+        border-left-color: #6366f1;
+        transform: translateX(5px);
+    }
+
+    .post-list-title {
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+        font-size: 1.05rem;
+    }
+
+    .post-list-title a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .post-list-title a:hover {
+        color: #6366f1;
+    }
+
+    .post-list-meta {
+        display: flex;
+        gap: 1.25rem;
+        font-size: 0.85rem;
+        color: #6b7280;
+        flex-wrap: wrap;
+    }
+
+    .post-list-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: #6b7280;
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .btn-create {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.875rem 1.75rem;
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-create:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(99, 102, 241, 0.3);
+    }
+
+    @media (max-width: 968px) {
+        .dashboard-sections {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+        }
+
+        .dashboard-header, .section-card {
+            padding: 1.5rem;
+        }
+    }
+</style>
+
+<div class="dashboard-header">
+    <h1>📊 Your Dashboard</h1>
+    <p>Welcome back, {{ user.username }}! Here's your blog analytics.</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card stat-card-1">
+        <div class="stat-icon">📝</div>
+        <div class="stat-value">{{ total_posts }}</div>
+        <div class="stat-label">Total Posts</div>
+    </div>
+
+    <div class="stat-card stat-card-2">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value">{{ published_posts }}</div>
+        <div class="stat-label">Published Posts</div>
+    </div>
+
+    <div class="stat-card stat-card-3">
+        <div class="stat-icon">📄</div>
+        <div class="stat-value">{{ draft_posts }}</div>
+        <div class="stat-label">Draft Posts</div>
+    </div>
+
+    <div class="stat-card stat-card-4">
+        <div class="stat-icon">👁️</div>
+        <div class="stat-value">{{ total_views }}</div>
+        <div class="stat-label">Total Views</div>
+    </div>
+
+    <div class="stat-card stat-card-5">
+        <div class="stat-icon">❤️</div>
+        <div class="stat-value">{{ total_likes }}</div>
+        <div class="stat-label">Total Likes</div>
+    </div>
+
+    <div class="stat-card stat-card-6">
+        <div class="stat-icon">💬</div>
+        <div class="stat-value">{{ total_comments }}</div>
+        <div class="stat-label">Total Comments</div>
+    </div>
+</div>
+
+<div class="dashboard-sections">
+    <!-- Recent Posts -->
+    <div class="section-card">
+        <div class="section-header">
+            <h2>📚 Recent Posts</h2>
+            <a href="{% url 'profile' %}" class="view-all-link">View All →</a>
+        </div>
+
+        {% if recent_posts %}
+            {% for post in recent_posts %}
+                <div class="post-list-item">
+                    <div class="post-list-title">
+                        <a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a>
+                    </div>
+                    <div class="post-list-meta">
+                        <span>📅 {{ post.date_posted|date:"M d" }}</span>
+                        <span>👁️ {{ post.views }}</span>
+                        <span>❤️ {{ post.total_likes }}</span>
+                        <span>💬 {{ post.total_comments }}</span>
+                        {% if post.status == 'draft' %}
+                            <span style="color: #f59e0b;">✍️ Draft</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <p>No posts yet. Start writing!</p>
+                <a href="{% url 'post-create' %}" class="btn-create">Create Your First Post</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Most Popular Posts -->
+    <div class="section-card">
+        <div class="section-header">
+            <h2>🔥 Most Popular</h2>
+            <a href="{% url 'profile' %}" class="view-all-link">View All →</a>
+        </div>
+
+        {% if popular_posts %}
+            {% for post in popular_posts %}
+                <div class="post-list-item">
+                    <div class="post-list-title">
+                        <a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a>
+                    </div>
+                    <div class="post-list-meta">
+                        <span>👁️ {{ post.views }} views</span>
+                        <span>❤️ {{ post.total_likes }} likes</span>
+                        <span>💬 {{ post.total_comments }} comments</span>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📊</div>
+                <p>No data yet. Keep posting!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 2rem;">
+    <a href="{% url 'post-create' %}" class="btn-create" style="font-size: 1.1rem; padding: 1rem 2.5rem;">
+        ✨ Create New Post
+    </a>
+</div>
+{% endblock %}
