@@ -469,8 +469,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Muntaha Asif
 
-- GitHub: [@yourusername](https://github.com/Muntaha-Asif)
-- LinkedIn: [Your Name](https://www.linkedin.com/in/muntaha-asif-84156732a/)
+- GitHub: (https://github.com/Muntaha-Asif)
+- LinkedIn: (https://www.linkedin.com/in/muntaha-asif-84156732a/)
 
 ---
 
